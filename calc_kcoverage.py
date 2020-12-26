@@ -87,16 +87,9 @@ Tsky = 60e3 * (3e8/(array['freq']*1e9))**2.55  # sky temperature in mK
 
 #=================================MAIN CODE===================================
 
-#set up blank arrays/dictionaries
-kprs = []
-#sense will include sample variance, Tsense will be Thermal only
-sense, Tsense = {}, {}
-
+#Transform uv coverage to total integration time
 uv_coverage *= t_int
 SIZE = uv_coverage.shape[0]
-
-#Before cutting out the half plane, make a deep copy of the uv coverage array
-uv_covfull = deepcopy(uv_coverage)
 
 #Compute coverage in k-space (k in 1/Mpc)
 N = 128 #grid size
@@ -132,7 +125,7 @@ Tsys = Tsky + Trx
 T2 = (X2Y(z) / h**3) * bm_eff * Tsys**2 / (2*(1e9) * opts.ndays)
 
 #Run over all u,v modes
-where = np.where(uv_covfull > 0)
+where = np.where(uv_coverage > 0)
 for iu,iv in zip(where[1], where[0]):
     #Convert (u,v) to (kx,ky) in 1/Mpc
     u, v = (iu - SIZE/2) * dish_size_in_lambda, (iv - SIZE/2) * dish_size_in_lambda
@@ -161,7 +154,7 @@ for iu,iv in zip(where[1], where[0]):
         kz_id = find_nearest(kz_vec, kz)
 
         #The amount of uv coverage (baseline intensity)
-        cov = uv_covfull[iv,iu]
+        cov = uv_coverage[iv,iu]
 
         #Deposit the coverage
         k_coverage[kx_id, ky_id, kz_id] += cov
@@ -176,7 +169,7 @@ for iu,iv in zip(where[1], where[0]):
 
 
 #Coverage per kpl
-total_cov_uv = uv_covfull.sum()
+total_cov_uv = uv_coverage.sum()
 total_cov_k = k_coverage[:,:,0].sum()
 
 print 'Total coverage (uv): %e' % total_cov_uv
