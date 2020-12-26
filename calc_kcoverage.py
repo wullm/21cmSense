@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 '''
 Calculates thermal noise levels of a 21cm experiment given uv coverage
-data calculation with mk_array_file.py.
+calculated with mk_array_file.py.
 '''
 import aipy as a, numpy as n, optparse, sys
 from scipy import interpolate
