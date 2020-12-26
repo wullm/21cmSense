@@ -26,10 +26,10 @@ def beamgridder(xcen,ycen,size):
     xcen += cen
     ycen = -1*ycen + cen
     beam = n.zeros((size,size))
-    if round(ycen) > size - 1 or round(xcen) > size - 1 or ycen < 0. or xcen <0.: 
+    if int(round(ycen)) > size - 1 or int(round(xcen)) > size - 1 or ycen < 0. or xcen <0.:
         return beam
     else:
-        beam[round(ycen),round(xcen)] = 1. #single pixel gridder
+        beam[int(round(ycen)),int(round(xcen))] = 1. #single pixel gridder
         return beam
 
 #==============================READ ARRAY PARAMETERS=========================
@@ -69,7 +69,7 @@ cat = a.src.get_catalog(opts.cal,'z') #create zenith source object
 aa.set_jultime(cen_jd)
 obs_lst = aa.sidereal_time()
 obs_zen = a.phs.RadioFixedBody(obs_lst,aa.lat)
-obs_zen.compute(aa) #observation is phased to zenith of the center time of the drift 
+obs_zen.compute(aa) #observation is phased to zenith of the center time of the drift
 
 #find redundant baselines
 bl_len_min = opts.bl_min / (a.const.c/(ref_fq*1e11)) #converts meters to lambda
@@ -89,12 +89,12 @@ for i in xrange(nants):
 print 'There are %i baseline types' % len(uvbins.keys())
 
 print 'The longest baseline is %.2f meters' % (bl_len_max*(a.const.c/(ref_fq*1e11))) #1e11 converts from GHz to cm
-if opts.bl_max: 
+if opts.bl_max:
     bl_len_max = opts.bl_max / (a.const.c/(ref_fq*1e11)) #units of wavelength
     print 'The longest baseline being included is %.2f m' % (bl_len_max*(a.const.c/(ref_fq*1e11)))
 
 #grid each baseline type into uv plane
-dim = n.round(bl_len_max/dish_size_in_lambda)*2 + 1 # round to nearest odd
+dim = int(n.round(bl_len_max/dish_size_in_lambda))*2 + 1 # round to nearest odd
 uvsum,quadsum = n.zeros((dim,dim)), n.zeros((dim,dim)) #quadsum adds all non-instantaneously-redundant baselines incoherently
 for cnt, uvbin in enumerate(uvbins):
     print 'working on %i of %i uvbins' % (cnt+1, len(uvbins))
